@@ -34,19 +34,26 @@ TW.ready = function (_fn) {
 TW.init = function () {
     TW.getNewsArticles();
     document.querySelector(".btn-search").addEventListener("click", TW.searchNewsArticles);
+    document.querySelector(".search-field").addEventListener("keypress", TW.enterSearch);
 };
+
+TW.enterSearch = function (event) {
+    var keyPressed = event.which || event.keyCode;
+
+    if (keyPressed === 13) {
+        TW.searchNewsArticles();
+    }
+}
 
 TW.searchNewsArticles = function () {
 
     var searchValue = document.querySelector(".search-field").value;
-    var querySearchValue = "q" + searchValue + "&";
 
     TW.getNewsArticles(searchValue)
-    console.log(searchValue);
 }
 
 TW.getNewsArticles = function (searchValue) {
-    console.log(searchValue);
+
     var url = 'https://newsapi.org/v2/everything?' +
         'q='+ (searchValue || 'USA') + '&' +
         'apiKey=0873144ad01742579b01e33f145e5163';
@@ -68,10 +75,8 @@ TW.getNewsArticles = function (searchValue) {
                 var articleObj = new SingleArticle(articles[i].urlToImage, articles[i].title, articles[i].description, articles[i].url);
                 singleArticle += articleObj.getCard();
 
-                console.log(singleArticle);
             }
 
-            console.log(getArticleContainer);
             getArticleContainer.innerHTML = singleArticle;
 
         })
