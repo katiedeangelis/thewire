@@ -33,12 +33,22 @@ TW.ready = function (_fn) {
  */
 TW.init = function () {
     TW.getNewsArticles();
+    document.querySelector(".btn-search").addEventListener("click", TW.searchNewsArticles);
 };
 
-TW.getNewsArticles = function () {
+TW.searchNewsArticles = function () {
 
+    var searchValue = document.querySelector(".search-field").value;
+    var querySearchValue = "q" + searchValue + "&";
+
+    TW.getNewsArticles(searchValue)
+    console.log(searchValue);
+}
+
+TW.getNewsArticles = function (searchValue) {
+    console.log(searchValue);
     var url = 'https://newsapi.org/v2/everything?' +
-        'q=al-jazeera-english&' +
+        'q='+ (searchValue || 'USA') + '&' +
         'apiKey=0873144ad01742579b01e33f145e5163';
 
     var req = new Request(url);
@@ -54,17 +64,10 @@ TW.getNewsArticles = function () {
             var singleArticle = "";
             var getArticleContainer = document.querySelector(".article-container");
 
-            // TODO: Move singleArticle into loop and try appending each article to the article container
-            // one at a time instead of all at once.
             for (var i = 0; i < articles.length; i++) {
-                singleArticle += `<div class="card news-article">
-                    <img src="${articles[i].urlToImage || "https://dubsism.files.wordpress.com/2017/12/image-not-found.png"}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">${articles[i].title}</h5>
-                        <p class="card-text">${articles[i].description}</p>
-                        <a href="${articles[i].url}" target="_blank" class="btn btn-primary">Go to article</a>
-                    </div>
-                </div>`;
+                var articleObj = new SingleArticle(articles[i].urlToImage, articles[i].title, articles[i].description, articles[i].url);
+                singleArticle += articleObj.getCard();
+
                 console.log(singleArticle);
             }
 
@@ -72,7 +75,6 @@ TW.getNewsArticles = function () {
             getArticleContainer.innerHTML = singleArticle;
 
         })
-
 
 };
 
